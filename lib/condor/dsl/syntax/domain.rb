@@ -8,7 +8,8 @@ module Condor
 
         module InstanceMethods
           def log!(*args)
-            closure.dispatcher.add!(closure.event_name, closure.event_domain, *args)
+            closure.event_registry.
+              define!(closure.event_name, closure.event_domain, *args)
           end
         end
       end

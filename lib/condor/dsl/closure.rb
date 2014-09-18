@@ -13,8 +13,8 @@ module Condor
 
     # accessors via closure inheritance
 
-    def dispatcher
-      options[:dispatcher] || enclosure.dispatcher
+    def event_registry
+      options[:event_registry] || enclosure.event_registry
     end
 
     def event_name

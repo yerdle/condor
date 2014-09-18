@@ -3,16 +3,16 @@ require 'spec_helper'
 module Condor
   module DSL
     describe Closure do
-      let(:dispatcher)  { double('dispatcher') }
+      let(:event_registry)  { double('event registry') }
 
-      let(:top_closure)    { Closure.new(nil, dispatcher: dispatcher) }
+      let(:top_closure)    { Closure.new(nil, event_registry: event_registry) }
       let(:event_closure)  { Closure.new(top_closure, event_name: :signup) }
       let(:domain_closure) { Closure.new(event_closure, event_domain: :growth) }
 
-      describe '#dispatcher' do
+      describe '#event_registry' do
         it "delegates to closures' accessors" do
-          expect(top_closure).to receive(:dispatcher).and_call_original
-          expect(event_closure.dispatcher).to eq(dispatcher)
+          expect(top_closure).to receive(:event_registry).and_call_original
+          expect(event_closure.event_registry).to eq(event_registry)
         end
       end
 
