@@ -9,3 +9,5 @@ group :test do
 end
 
 gem 'activesupport', '4.1.6'
+
+gem 'keen', '>=0.7.8'
