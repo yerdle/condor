@@ -1,16 +1,36 @@
-module Condor
-  class Dispatcher
-    attr_reader :registry
-    attr_reader :publishers
+require 'spec_helper'
 
-    def initialize(registry, publishers)
-      @registry   = registry
-      @publishers = publishers
+module Condor
+
+  describe Dispatcher do
+
+    let(:registry) { Event::Registry.new }
+    let(:publishers) { [double('publisher one'), double('publisher two')] }
+    subject { Dispatcher.new(registry, publishers) }
+
+    before do
+      closure = DSL::Closure.new(nil, event_registry: registry)
+      dsl = DSL::Syntax::Top
+      runner = DSL::Runner.new(closure, dsl)
+
+      runner.eval do
+        on(:signup) {
+          concerning(:growth) {
+            log!(:first_name)
+            log!(:join_date)
+          }
+        }
+      end
     end
 
-    def dispatch(event, data_sources)
-      # not doing too much to validate data sources here, per the registry
-      publishers.each { |p| p.publish(event, data_sources) }
+    describe '#dispatch' do
+
+      it 'should call publish on each publisher' do
+        expect(publishers[0]).to receive(:publish).once
+        expect(publishers[1]).to receive(:publish).once
+        subject.dispatch(:signup, double('data source'))
+      end
     end
   end
 end
+
