@@ -9,7 +9,7 @@ module Condor
       end
 
       def define!(name, domain, *params)
-        definitions[name] = definitions[name].adding(domain, params)
+        definitions[name] = definitions[name].adding(domain, *params)
       end
     end
   end
