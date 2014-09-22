@@ -5,7 +5,13 @@ module Condor
   describe Dispatcher do
 
     let(:registry) { Event::Registry.new }
-    let(:relays) { [double('relay one'), double('relay two')] }
+    let(:relays) do
+      [
+        double('relay one').as_null_object,
+        double('relay two').as_null_object
+      ]
+    end
+
     subject { Dispatcher.new(registry, relays) }
 
     let(:growth_data_source) do
@@ -43,27 +49,20 @@ module Condor
     end
 
     describe '#dispatch' do
-      it 'should call publish on each relay' do
+      it 'munges data for each domain with the right data source' do
+        event_definition = registry.definitions[:signup]
+        expect(event_definition.domains[:growth]).to receive(:munge).
+          with(growth_data_source)
+        expect(event_definition.domains[:community]).to receive(:munge).
+          with(community_data_source)
+        subject.dispatch(:signup, data_sources)
+      end
+
+      it 'calls publish on each relay' do
         expect(relays[0]).to receive(:publish).once
         expect(relays[1]).to receive(:publish).once
         subject.dispatch(:signup, data_sources)
       end
     end
-
-    describe Dispatcher::DataMunger do
-      subject { Dispatcher::DataMunger.new(registry.definitions[:signup],
-                                           data_sources) }
-
-
-      it 'extracts data from each source to its respective domain' do
-        expect(growth_data_source).to receive(:join_date).once
-        expect(growth_data_source).to receive(:referrer).once
-        expect(community_data_source).to receive(:email).once
-        expect(community_data_source).to receive(:first_name).once
-
-        subject.munge
-      end
-    end
   end
 end
-

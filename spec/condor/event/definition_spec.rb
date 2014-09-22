@@ -1,15 +1,44 @@
+require 'spec_helper'
+
 module Condor
   module Event
-    describe Definition do
-      describe '#adding' do
-        subject { Definition.new(:signup) }
+    describe Definition::Domain do
+      subject { Definition::Domain.new(:growth) }
 
-        it 'returns a copy of the definition with more data for the domain' do
-          new_definition = subject.adding(:growth, :title)
-          expect(new_definition.object_id).not_to eq(subject.object_id)
-          expect(new_definition.domains).not_to eq(subject.domains)
+      before do
+        subject.loggables << :email
+        subject.loggables << :first_name
+      end
+
+      describe '#munge' do
+        let(:data_source) do
+          double('data source', email: 'quack@allday.com', first_name: 'Phil')
         end
 
+        it 'asks the data source for data' do
+          expect(data_source).to receive(:email).once
+          expect(data_source).to receive(:first_name).once
+          subject.munge(data_source)
+        end
+      end
+    end
+
+    describe Definition do
+      describe '#define!' do
+        subject { Definition.new(:signup) }
+
+        let(:domain_name) { :growth }
+        let(:loggable)    { :first_name }
+
+        it 'creates a new domain if never encountered' do
+          subject.define!(domain_name, loggable)
+          expect(subject.domains).to include(domain_name)
+        end
+
+        it 'defines a loggable on the new domain' do
+          subject.define!(domain_name, loggable)
+          expect(subject.domains[domain_name].loggables).to include(loggable)
+        end
       end
     end
   end

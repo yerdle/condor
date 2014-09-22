@@ -8,8 +8,8 @@ module Condor
         @definitions = Hash.new { |d, n| d[n] = Definition.new(n) }
       end
 
-      def define!(name, domain, *params)
-        definitions[name] = definitions[name].adding(domain, *params)
+      def define!(name, domain, loggable)
+        definitions[name].define!(domain, loggable)
       end
     end
   end
