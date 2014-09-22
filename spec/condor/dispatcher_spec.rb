@@ -5,7 +5,7 @@ module Condor
   describe Dispatcher do
 
     let(:registry) { Event::Registry.new }
-    let(:relays) { [double('publisher one'), double('publisher two')] }
+    let(:relays) { [double('relay one'), double('relay two')] }
     subject { Dispatcher.new(registry, relays) }
 
     let(:growth_data_source) do
@@ -43,7 +43,7 @@ module Condor
     end
 
     describe '#dispatch' do
-      it 'should call publish on each publisher' do
+      it 'should call publish on each relay' do
         expect(relays[0]).to receive(:publish).once
         expect(relays[1]).to receive(:publish).once
         subject.dispatch(:signup, data_sources)
