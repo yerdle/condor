@@ -4,9 +4,9 @@ module Condor
 
       attr_reader :client
 
-      def self.transform(input)
+      def self.transform(input, event_name)
         properties = input.dup
-        properties[:event_name] = name
+        properties[:event_name] = event_name
         properties
       end
 
@@ -15,7 +15,7 @@ module Condor
       end
 
       def publish(domain, name, properties)
-        client.publish(domain, Keen.transform(properties))
+        client.publish(domain, Keen.transform(properties, name))
       end
 
     end
