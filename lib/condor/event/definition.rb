@@ -1,7 +1,6 @@
 module Condor
   module Event
     class Definition
-
       class Domain
         attr_reader :name
         attr_reader :loggables
@@ -11,7 +10,7 @@ module Condor
           @loggables = loggables || Set.new
         end
 
-        def munge(data_source)
+        def import(data_source)
           loggables.map { |l| [l, data_source.send(l)] }.to_h
         end
       end

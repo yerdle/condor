@@ -10,7 +10,7 @@ module Condor
         subject.loggables << :first_name
       end
 
-      describe '#munge' do
+      describe '#import' do
         let(:data_source) do
           double('data source', email: 'quack@allday.com', first_name: 'Phil')
         end
@@ -18,7 +18,7 @@ module Condor
         it 'asks the data source for data' do
           expect(data_source).to receive(:email).once
           expect(data_source).to receive(:first_name).once
-          subject.munge(data_source)
+          subject.import(data_source)
         end
       end
     end
