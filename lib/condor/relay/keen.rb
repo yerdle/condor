@@ -1,7 +1,6 @@
 module Condor
   module Relay
     class Keen
-
       attr_reader :client
 
       def self.transform(input, event_name)
@@ -14,10 +13,11 @@ module Condor
         @client = client
       end
 
-      def publish(domain, name, properties)
-        client.publish(domain, Keen.transform(properties, name))
+      def publish(event_name, aggregate_data)
+        aggregate_data.each do |domain_name, data|
+          client.publish(domain_name, Keen.transform(data, event_name))
+        end
       end
-
     end
   end
 end
