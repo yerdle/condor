@@ -1,59 +1,51 @@
 require 'spec_helper'
 
 module Condor
-
   describe Dispatcher do
-
-    let(:registry) { Event::Registry.new }
-    let(:relays) do
-      [
-        double('relay one').as_null_object,
-        double('relay two').as_null_object
-      ]
-    end
-
     subject { Dispatcher.new(registry, relays) }
 
-    let(:growth_data_source) do
-      double('data source', join_date: 'today', referrer: 'hans')
-    end
+    let(:registry) { Event::Registry.new }
 
-    let(:community_data_source) do
-      double('data source', email: 'quack@allday.com', first_name: 'Leroy')
+    let(:relays) do
+      [double('relay').as_null_object, double('relay').as_null_object]
     end
 
     let(:data_sources) do
       {
-        growth: growth_data_source,
-        community: community_data_source
+        growth: double('data source', join_date: 'today', referrer: 'hans'),
+        community: double('data source', email: 'a@b.com', first_name: 'Leroy')
       }
     end
 
-    before do
-      closure = DSL::Closure.new(nil, event_registry: registry)
-      dsl = DSL::Syntax::Top
-      runner = DSL::Runner.new(closure, dsl)
+    let(:growth_data_source)    { data_sources[:growth] }
+    let(:community_data_source) { data_sources[:community] }
 
+    let(:runner) do
+      DSL::Runner.new(DSL::Closure.new(nil, event_registry: registry),
+                      DSL::Syntax::Top)
+    end
+
+    before do
       runner.eval do
         on(:signup) {
           concerning(:growth) {
-            log!(:join_date)
-            log!(:referrer)
+            log! :join_date
+            log! :referrer
           }
           concerning(:community) {
-            log!(:email)
-            log!(:first_name)
+            log! :email
+            log! :first_name
           }
         }
       end
     end
 
     describe '#dispatch' do
-      it 'munges data for each domain with the right data source' do
+      it 'imports data for each domain with the right data source' do
         event_definition = registry.definitions[:signup]
-        expect(event_definition.domains[:growth]).to receive(:munge).
+        expect(event_definition.domains[:growth]).to receive(:import).
           with(growth_data_source)
-        expect(event_definition.domains[:community]).to receive(:munge).
+        expect(event_definition.domains[:community]).to receive(:import).
           with(community_data_source)
         subject.dispatch(:signup, data_sources)
       end
