@@ -1,1 +1,1 @@
-![Condor](http://media.giphy.com/media/DmfcnoXLV9SsU/giphy.gif)
+![Condor](http://media1.giphy.com/media/TESHk7JpgnfbO/200.gif)
