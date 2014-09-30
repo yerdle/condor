@@ -6,18 +6,37 @@ module Condor
       describe Domain do
         subject { Domain }
 
-        describe '#log!' do
-          let(:name)   { :signup }
-          let(:domain) { :growth }
+        let(:name)   { :signup }
+        let(:domain) { :growth }
 
-          let(:event_registry) { double('event registry') }
-          let(:enclosure) do
-            double('closure', event_name: name, event_domain: domain)
+        let(:event_registry) { double('event registry') }
+        let(:enclosure) do
+          double('closure', event_name: name, event_domain: domain)
+        end
+
+        let(:closure) { Closure.new(enclosure, event_domain: domain) }
+        let!(:runner) { Runner.new(closure, Domain) }
+
+        describe '#with' do
+          it 'creates a new closure with the provided context' do
+            expect(Closure).to receive(:new).
+              with(closure, inherit: { fallback: 'unknown' })
+            runner.with(fallback: 'unknown') { nil }
           end
+        end
 
-          let(:closure) { Closure.new(enclosure, event_domain: domain) }
-          let!(:runner) { Runner.new(closure, Domain) }
+        describe '#log' do
+          let(:inherit) { {fallback: 'unknown'} }
 
+
+          it 'calls define! on the event registry' do
+            allow(closure).to receive(:event_registry).and_return(event_registry)
+            expect(event_registry).to receive(:define!).with(name, domain, inherit)
+            runner.log(name) { nil }
+          end
+        end
+
+        describe '#log!' do
           it 'calls define! on the event registry' do
             allow(closure).to receive(:event_registry).and_return(event_registry)
             expect(event_registry).to receive(:define!).with(name, domain, :title)

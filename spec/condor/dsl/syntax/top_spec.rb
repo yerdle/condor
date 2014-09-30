@@ -6,11 +6,20 @@ module Condor
       describe Top do
         subject { Top }
 
-        describe '#on' do
-          let(:event_registry) { double('event registry') }
-          let(:enclosure) { Closure.new(nil, event_registry: event_registry) }
-          let!(:runner)   { Runner.new(enclosure, Top) }
+        let(:event_registry) { double('event registry') }
+        let(:enclosure) { Closure.new(nil, event_registry: event_registry) }
 
+        let!(:runner)   { Runner.new(enclosure, Top) }
+
+        describe '#with' do
+          it 'creates a new closure with the provided context' do
+            expect(Closure).to receive(:new).
+              with(enclosure, inherit: { fallback: 'unknown' })
+            runner.with(fallback: 'unknown') { nil }
+          end
+        end
+
+        describe '#on' do
           it 'creates a new closure with the provided event' do
             expect(Closure).to receive(:new).
               with(enclosure, { event_name: :signup })

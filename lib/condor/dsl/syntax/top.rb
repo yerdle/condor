@@ -7,6 +7,12 @@ module Condor
         end
 
         module InstanceMethods
+          def with(**options, &block)
+            new_closure = Closure.new(closure, inherit: options)
+            runner = Runner.new(new_closure, Top)
+            runner.eval(&block)
+          end
+
           def on(event_name, &block)
             new_closure  = Closure.new(closure, event_name: event_name)
             runner = Runner.new(new_closure, Event)
