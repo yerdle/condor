@@ -20,19 +20,8 @@ module Condor
         describe '#with' do
           it 'creates a new closure with the provided context' do
             expect(Closure).to receive(:new).
-              with(closure, inherit: { fallback: 'unknown' })
+              with(closure, scope: { fallback: 'unknown' })
             runner.with(fallback: 'unknown') { nil }
-          end
-        end
-
-        describe '#log' do
-          let(:inherit) { {fallback: 'unknown'} }
-
-
-          it 'calls define! on the event registry' do
-            allow(closure).to receive(:event_registry).and_return(event_registry)
-            expect(event_registry).to receive(:define!).with(name, domain, inherit)
-            runner.log(name) { nil }
           end
         end
 

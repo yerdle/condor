@@ -8,7 +8,7 @@ module Condor
 
         module InstanceMethods
           def with(**options, &block)
-            new_closure  = Closure.new(closure, inherit: options)
+            new_closure  = Closure.new(closure, scope: options)
             runner = Runner.new(new_closure, Domain)
             runner.eval(&block)
           end

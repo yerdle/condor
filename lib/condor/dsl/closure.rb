@@ -7,7 +7,7 @@ module Condor
 
       attr_reader :enclosure, :options
 
-      def initialize(enclosure, options={})
+      def initialize(enclosure, **options)
         @enclosure = enclosure
         @options   = options
       end
@@ -28,6 +28,11 @@ module Condor
         options[:event_domain] || enclosure.event_domain
       rescue NoMethodError
         raise ContextRequiredError, :event_domain
+      end
+
+      def scope
+        to_merge = options[:scope] || {}
+        enclosure.nil? ? to_merge : enclosure.scope.merge(to_merge)
       end
     end
   end

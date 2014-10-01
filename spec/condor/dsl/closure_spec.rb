@@ -5,9 +5,16 @@ module Condor
     describe Closure do
       let(:event_registry)  { double('event registry') }
 
-      let(:top_closure)    { Closure.new(nil, event_registry: event_registry) }
-      let(:event_closure)  { Closure.new(top_closure, event_name: :signup) }
-      let(:domain_closure) { Closure.new(event_closure, event_domain: :growth) }
+      let(:top_closure)     { Closure.new(nil, event_registry: event_registry) }
+      let(:event_closure)   { Closure.new(top_closure, event_name: :signup) }
+      let(:scope_closure) do
+        Closure.new(
+           event_closure, scope: { fallback: 'unknown', especial: 'modelo' })
+      end
+
+      let(:domain_closure) do
+        Closure.new(scope_closure, scope: { especial: 'overriden' })
+      end
 
       describe '#event_registry' do
         it "delegates to closures' accessors" do
@@ -37,6 +44,16 @@ module Condor
 
         it 'raises if not present in closure hierarchy' do
           expect { top_closure.event_domain }.to raise_error
+        end
+      end
+
+      describe '#scope' do
+        it 'aggregates scopes recursively, inheriting' do
+          expect(domain_closure.scope[:fallback]).to eq('unknown')
+        end
+
+        it 'respects inheritance--overrides get priority' do
+          expect(domain_closure.scope[:especial]).to eq('overriden')
         end
       end
     end

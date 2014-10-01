@@ -12,7 +12,7 @@ module Condor
         describe '#with' do
           it 'creates a new closure with the provided context' do
             expect(Closure).to receive(:new).
-              with(closure, inherit: { fallback: 'unknown' })
+              with(closure, scope: { fallback: 'unknown' })
             runner.with(fallback: 'unknown') { nil }
           end
         end
