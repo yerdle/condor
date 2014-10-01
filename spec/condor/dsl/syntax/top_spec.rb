@@ -6,9 +6,8 @@ module Condor
       describe Top do
         subject { Top }
 
-        let(:event_registry) { double('event registry') }
-        let(:enclosure) { Closure.new(nil, event_registry: event_registry) }
-
+        let(:registry)  { double('event registry') }
+        let(:enclosure) { Closure.new(nil, registry: registry) }
         let!(:runner)   { Runner.new(enclosure, Top) }
 
         describe '#with' do
@@ -22,7 +21,7 @@ module Condor
         describe '#on' do
           it 'creates a new closure with the provided event' do
             expect(Closure).to receive(:new).
-              with(enclosure, { event_name: :signup })
+              with(enclosure, { event: :signup })
             runner.on(:signup) { nil }
           end
 

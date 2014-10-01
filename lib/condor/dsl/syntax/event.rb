@@ -8,15 +8,13 @@ module Condor
 
         module InstanceMethods
           def with(**options, &block)
-            new_closure  = Closure.new(closure, scope: options)
-            runner = Runner.new(new_closure, Event)
-            runner.eval(&block)
+            new_closure = Closure.new(closure, scope: options)
+            Runner.new(new_closure, Event).eval(&block)
           end
 
-          def concerning(event_domain, &block)
-            new_closure  = Closure.new(closure, event_domain: event_domain)
-            runner = Runner.new(new_closure, Domain)
-            runner.eval(&block)
+          def concerning(domain, &block)
+            new_closure = Closure.new(closure, domain: domain)
+            Runner.new(new_closure, Domain).eval(&block)
           end
         end
       end

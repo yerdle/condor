@@ -9,14 +9,12 @@ module Condor
         module InstanceMethods
           def with(**options, &block)
             new_closure = Closure.new(closure, scope: options)
-            runner = Runner.new(new_closure, Top)
-            runner.eval(&block)
+            Runner.new(new_closure, Top).eval(&block)
           end
 
-          def on(event_name, &block)
-            new_closure  = Closure.new(closure, event_name: event_name)
-            runner = Runner.new(new_closure, Event)
-            runner.eval(&block)
+          def on(event, &block)
+            new_closure = Closure.new(closure, event: event)
+            Runner.new(new_closure, Event).eval(&block)
           end
         end
       end

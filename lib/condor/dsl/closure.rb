@@ -14,20 +14,20 @@ module Condor
 
       # accessors via closure inheritance
 
-      def event_registry
-        options[:event_registry] || enclosure.event_registry
+      def registry
+        options[:registry] || enclosure.registry
       end
 
-      def event_name
-        options[:event_name] || enclosure.event_name
+      def event
+        options[:event] || enclosure.event
       rescue NoMethodError
-        raise ContextRequiredError, :event_name
+        raise ContextRequiredError, :event
       end
 
-      def event_domain
-        options[:event_domain] || enclosure.event_domain
+      def domain
+        options[:domain] || enclosure.domain
       rescue NoMethodError
-        raise ContextRequiredError, :event_domain
+        raise ContextRequiredError, :domain
       end
 
       def scope

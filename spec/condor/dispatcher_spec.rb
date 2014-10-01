@@ -21,8 +21,8 @@ module Condor
     let(:community_data_source) { data_sources[:community] }
 
     let(:runner) do
-      DSL::Runner.new(DSL::Closure.new(nil, event_registry: registry),
-                      DSL::Syntax::Top)
+      closure = DSL::Closure.new(nil, registry: registry)
+      DSL::Runner.new(closure, DSL::Syntax::Top)
     end
 
     before do

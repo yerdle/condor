@@ -6,7 +6,7 @@ module Condor
       describe Event do
         subject { Event }
 
-        let(:closure) { Closure.new(double('closure'), event_name: :signup) }
+        let(:closure) { Closure.new(double('closure'), event: :signup) }
         let!(:runner) { Runner.new(closure, Event) }
 
         describe '#with' do
@@ -18,9 +18,9 @@ module Condor
         end
 
         describe '#concerning' do
-          it 'creates a new closure with the provided event_domain' do
+          it 'creates a new closure with the provided domain' do
             expect(Closure).to receive(:new).
-              with(closure, { event_domain: :growth })
+              with(closure, { domain: :growth })
             runner.concerning(:growth) { true }
           end
 
