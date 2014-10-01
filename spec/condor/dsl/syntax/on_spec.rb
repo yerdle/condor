@@ -3,11 +3,11 @@ require 'spec_helper'
 module Condor
   module DSL
     module Syntax
-      describe Event do
-        subject { Event }
+      describe On do
+        subject { On }
 
         let(:closure) { Closure.new(double('closure'), event: :signup) }
-        let!(:runner) { Runner.new(closure, Event) }
+        let!(:runner) { Runner.new(closure, On) }
 
         describe '#with' do
           it 'creates a new closure with the provided context' do

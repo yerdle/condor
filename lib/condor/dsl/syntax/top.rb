@@ -14,7 +14,7 @@ module Condor
 
           def on(event, &block)
             new_closure = Closure.new(closure, event: event)
-            Runner.new(new_closure, Event).eval(&block)
+            Runner.new(new_closure, On).eval(&block)
           end
         end
       end

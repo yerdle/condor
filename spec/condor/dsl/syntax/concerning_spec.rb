@@ -3,8 +3,8 @@ require 'spec_helper'
 module Condor
   module DSL
     module Syntax
-      describe Domain do
-        subject { Domain }
+      describe Concerning do
+        subject { Concerning }
 
         let(:name)   { :signup }
         let(:domain) { :growth }
@@ -15,7 +15,7 @@ module Condor
         end
 
         let(:closure) { Closure.new(enclosure, domain: domain) }
-        let!(:runner) { Runner.new(closure, Domain) }
+        let!(:runner) { Runner.new(closure, Concerning) }
 
         describe '#with' do
           it 'creates a new closure with the provided context' do
