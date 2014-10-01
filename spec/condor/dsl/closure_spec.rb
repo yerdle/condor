@@ -3,10 +3,11 @@ require 'spec_helper'
 module Condor
   module DSL
     describe Closure do
-      let(:registry)  { double('event registry') }
+      let(:event_list)  { double('event list') }
 
-      let(:top_closure)     { Closure.new(nil, registry: registry) }
-      let(:event_closure)   { Closure.new(top_closure, event: :signup) }
+      let(:top_closure)   { Closure.new(nil, event_list: event_list) }
+      let(:event_closure) { Closure.new(top_closure, event: :signup) }
+
       let(:scope_closure) do
         Closure.new(
            event_closure, scope: { fallback: 'unknown', especial: 'modelo' })
@@ -16,10 +17,10 @@ module Condor
         Closure.new(scope_closure, scope: { especial: 'overriden' })
       end
 
-      describe '#registry' do
+      describe '#event_list' do
         it "delegates to closures' accessors" do
-          expect(top_closure).to receive(:registry).and_call_original
-          expect(event_closure.registry).to eq(registry)
+          expect(top_closure).to receive(:event_list).and_call_original
+          expect(event_closure.event_list).to eq(event_list)
         end
       end
 

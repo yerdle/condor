@@ -12,8 +12,9 @@ module Condor
             Runner.new(new_closure, Concerning).eval(&block)
           end
 
-          def log!(*args)
-            closure.registry.define!(closure.event, closure.domain, *args)
+          def log(loggable, **options, &block)
+            event_list << ::Condor::Registry::Definition.new(
+              event, domain, loggable, block, **scope.merge(options))
           end
         end
       end

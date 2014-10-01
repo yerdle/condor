@@ -6,15 +6,16 @@ module Condor
       describe Concerning do
         subject { Concerning }
 
-        let(:name)   { :signup }
-        let(:domain) { :growth }
+        let(:event)  { :signup }
+        let(:domain) { :board  }
 
-        let(:registry) { double('event registry') }
-        let(:enclosure) do
-          double('closure', event: name, domain: domain)
+        let(:closure) do
+          double('closure',
+            event_list: double('event_list'),
+            event: event, domain: domain,
+            scope: { some_option: 'value' })
         end
 
-        let(:closure) { Closure.new(enclosure, domain: domain) }
         let!(:runner) { Runner.new(closure, Concerning) }
 
         describe '#with' do
@@ -25,11 +26,14 @@ module Condor
           end
         end
 
-        describe '#log!' do
-          it 'calls define! on the event registry' do
-            allow(closure).to receive(:registry).and_return(registry)
-            expect(registry).to receive(:define!).with(name, domain, :title)
-            runner.log!(:title)
+        describe '#log' do
+          let(:options) do
+            { fallback: 'unknown' }
+          end
+
+          it 'adds a definition to the event list' do
+            expect(closure.event_list).to receive(:<<).once
+            runner.log(:user_id, **options) { nil }
           end
         end
       end

@@ -10,12 +10,6 @@ module Condor
       def initialize(client)
         @client = client
       end
-
-      def publish(event, aggregate_data)
-        aggregate_data.each do |domain, data|
-          client.publish(domain, Keen.transform(data, event))
-        end
-      end
     end
   end
 end

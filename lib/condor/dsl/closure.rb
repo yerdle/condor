@@ -14,8 +14,8 @@ module Condor
 
       # accessors via closure inheritance
 
-      def registry
-        options[:registry] || enclosure.registry
+      def event_list
+        options[:event_list] || enclosure.event_list
       end
 
       def event
