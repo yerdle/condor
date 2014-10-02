@@ -3,6 +3,8 @@ module Condor
     class Runner < Object
       attr_reader :closure, :dsl
 
+      delegate :scope, :event_list, :event, :domain, to: :closure
+
       def initialize(closure, dsl)
         @closure = closure
         eigenclass = (class << self; self; end)

@@ -3,33 +3,32 @@ require 'spec_helper'
 module Condor
   module DSL
     module Syntax
-      describe Top do
-        subject { Top }
+      describe On do
+        subject { On }
 
-        let(:registry)  { double('event registry') }
-        let(:enclosure) { Closure.new(nil, registry: registry) }
-        let!(:runner)   { Runner.new(enclosure, Top) }
+        let(:closure) { Closure.new(double('closure'), event: :signup) }
+        let!(:runner) { Runner.new(closure, On) }
 
         describe '#with' do
           it 'creates a new closure with the provided context' do
             expect(Closure).to receive(:new).
-              with(enclosure, scope: { fallback: 'unknown' })
+              with(closure, scope: { fallback: 'unknown' })
             runner.with(fallback: 'unknown') { nil }
           end
         end
 
-        describe '#on' do
-          it 'creates a new closure with the provided event' do
+        describe '#concerning' do
+          it 'creates a new closure with the provided domain' do
             expect(Closure).to receive(:new).
-              with(enclosure, { event: :signup })
-            runner.on(:signup) { nil }
+              with(closure, { domain: :growth })
+            runner.concerning(:growth) { true }
           end
 
           it 'evaluates the code in the provided block in a new clean room' do
             double = double('new Runner')
             expect(Runner).to receive(:new).once.and_return(double)
             expect(double).to receive(:eval)
-            runner.on(:signup) { nil }
+            runner.concerning(:growth) { true }
           end
         end
       end

@@ -2,58 +2,86 @@ require 'spec_helper'
 
 module Condor
   describe Dispatcher do
-    subject { Dispatcher.new(registry, relays) }
-
-    let(:registry) { Event::Registry.new }
+    let(:event_list) { Registry::EventList.new }
 
     let(:relays) do
       [double('relay').as_null_object, double('relay').as_null_object]
     end
 
-    let(:data_sources) do
-      {
-        growth: double('data source', join_date: 'today', referrer: 'hans'),
-        community: double('data source', email: 'a@b.com', first_name: 'Leroy')
-      }
-    end
-
-    let(:growth_data_source)    { data_sources[:growth] }
-    let(:community_data_source) { data_sources[:community] }
-
-    let(:runner) do
-      DSL::Runner.new(DSL::Closure.new(nil, event_registry: registry),
-                      DSL::Syntax::Top)
-    end
+    subject { Dispatcher.new(event_list, relays) }
 
     before do
-      runner.eval do
+      closure = DSL::Closure.new(nil, event_list: event_list)
+
+      DSL::Runner.new(closure, DSL::Syntax::Top).eval do
         on(:signup) {
-          concerning(:growth) {
-            log! :join_date
-            log! :referrer
+          concerning(:board) {
+            with(fallback: 'unknown') {
+              log :is_first_time do |req:|
+                req.headers['HTTP_X_YERDLE_FIRST_UX']
+              end
+
+              log :app_version do |req:|
+                req.headers['HTTP_X_YERDLE_VERSION']
+              end
+
+              log :app_build do |req:|
+                req.headers['HTTP_X_YERDLE_BUILD']
+              end
+
+              log :user_join_time do |user:|
+                user.try(:created_at)
+              end
+
+              log :user_id do |user:|
+                user.try(:id)
+              end
+            }
           }
-          concerning(:community) {
-            log! :email
-            log! :first_name
+        }
+
+        on(:post) {
+          concerning(:board) {
+            log(:auction_id) { |auction:| auction.id }
           }
         }
       end
     end
 
     describe '#dispatch' do
-      it 'imports data for each domain with the right data source' do
-        event_definition = registry.definitions[:signup]
-        expect(event_definition.domains[:growth]).to receive(:import).
-          with(growth_data_source)
-        expect(event_definition.domains[:community]).to receive(:import).
-          with(community_data_source)
-        subject.dispatch(:signup, data_sources)
+      let(:headers) do
+        {
+          'HTTP_X_YERDLE_FIRST_UX' => true,
+          'HTTP_X_YERDLE_VERSION' => '1.0',
+          'HTTP_X_YERDLE_BUILD' => '1234'
+        }
+      end
+
+      let(:user) do
+        double('user', id: 1, created_at: Time.now)
+      end
+
+      let(:req) { double('request', headers: headers) }
+
+      it 'calls each relevant definition code block with context' do
+        definitions = event_list[:signup][:board].definitions
+        definitions.each do |definition|
+          expect(definition.block).to receive(:call)
+        end
+        subject.dispatch(:signup, req: req, user: user)
+      end
+
+      it "does not call irrelevant definitions' code blocks" do
+        definition = event_list[:post][:board][:auction_id]
+        expect(definition.block).not_to receive(:call)
+        subject.dispatch(:signup, req: req, user: user)
       end
 
       it 'calls publish on each relay' do
-        expect(relays[0]).to receive(:publish).once
-        expect(relays[1]).to receive(:publish).once
-        subject.dispatch(:signup, data_sources)
+        relays.each do |relay|
+          expect(relay).to receive(:publish).once
+        end
+        subject.dispatch(:signup, req: req, user: user)
       end
     end
   end

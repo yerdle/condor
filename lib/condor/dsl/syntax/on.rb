@@ -1,7 +1,7 @@
 module Condor
   module DSL
     module Syntax
-      module Top
+      module On
         def self.included(receiver)
           receiver.send(:include, InstanceMethods)
         end
@@ -9,12 +9,12 @@ module Condor
         module InstanceMethods
           def with(**options, &block)
             new_closure = Closure.new(closure, scope: options)
-            Runner.new(new_closure, Top).eval(&block)
+            Runner.new(new_closure, On).eval(&block)
           end
 
-          def on(event, &block)
-            new_closure = Closure.new(closure, event: event)
-            Runner.new(new_closure, On).eval(&block)
+          def concerning(domain, &block)
+            new_closure = Closure.new(closure, domain: domain)
+            Runner.new(new_closure, Concerning).eval(&block)
           end
         end
       end

@@ -3,35 +3,23 @@ require 'spec_helper'
 module Condor
   module Relay
     describe Keen do
-      let(:client)     { double('client').as_null_object }
-      let(:event_name) { :bid }
+      let(:fake_client) { double('keen client').as_null_object }
 
-      let(:aggregate_data) do
-        {
-          community: {
-            first_name: 'Joshua'
-          },
-          yerdle: {
-            title: 'Something'
-          }
-        }
-      end
-
-      subject { Keen.new(client) }
+      subject { Keen.new(fake_client) }
 
       describe '#publish' do
-        it 'calls publish on the client once for each domain' do
-          expect(client).to receive(:publish).with(:community, {
-            event_name: :bid,
-            first_name: 'Joshua'
-          }).once.ordered
+        let(:event)      { :signup }
+        let(:event_data) { { board: { is_first_time: true } } }
 
-          expect(client).to receive(:publish).with(:yerdle, {
-            event_name: :bid,
-            title: 'Something'
-          }).once.ordered
+        it 'transforms input' do
+          expect(described_class).to receive(:transform).and_call_original
+          subject.publish(:signup, event_data)
+        end
 
-          subject.publish(event_name, aggregate_data)
+        it 'publishes transformed input' do
+          expect(described_class).to receive(:transform).once.ordered
+          expect(fake_client).to receive(:publish).once.ordered
+          subject.publish(:signup, event_data)
         end
       end
     end
