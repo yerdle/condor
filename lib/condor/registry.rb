@@ -3,6 +3,8 @@ module Condor
     Definition = Struct.new(:event, :domain, :loggable, :block, :options)
 
     class CachedList
+      include Enumerable
+
       attr_reader :definitions
 
       def initialize(target, definitions=nil)
@@ -16,7 +18,17 @@ module Condor
         cache.delete(definition.send(target))
       end
 
+      def each(&block)
+        warm!
+        cache.each(&block)
+      end
+
       protected
+
+      def warm!
+        keys = definitions.map { |d| d.send(target) }.uniq
+        keys.each { |key| self[key] }
+      end
 
       attr_accessor :cache, :target
     end
@@ -56,7 +68,7 @@ module Condor
 
       def [](loggable)
         unless cache.include?(loggable)
-          definition = definitions.find { |d| d.loggable = loggable}
+          definition = definitions.find { |d| d.loggable == loggable }
           cache[loggable] = definition unless definition.nil?
         end
         cache[loggable]
