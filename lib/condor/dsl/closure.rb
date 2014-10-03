@@ -14,8 +14,8 @@ module Condor
 
       # accessors via closure inheritance
 
-      def event_list
-        options[:event_list] || enclosure.event_list
+      def events
+        options[:events] || enclosure.events
       end
 
       def event

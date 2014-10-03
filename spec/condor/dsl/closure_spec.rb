@@ -3,9 +3,9 @@ require 'spec_helper'
 module Condor
   module DSL
     describe Closure do
-      let(:event_list)  { double('event list') }
+      let(:events) { double('event set') }
 
-      let(:top_closure)   { Closure.new(nil, event_list: event_list) }
+      let(:top_closure)   { Closure.new(nil, events: events) }
       let(:event_closure) { Closure.new(top_closure, event: :signup) }
 
       let(:scope_closure) do
@@ -17,10 +17,10 @@ module Condor
         Closure.new(scope_closure, scope: { especial: 'overriden' })
       end
 
-      describe '#event_list' do
+      describe '#events' do
         it "delegates to closures' accessors" do
-          expect(top_closure).to receive(:event_list).and_call_original
-          expect(event_closure.event_list).to eq(event_list)
+          expect(top_closure).to receive(:events).and_call_original
+          expect(event_closure.events).to eq(events)
         end
       end
 

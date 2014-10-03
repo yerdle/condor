@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Condor
   module Registry
-    describe EventList do
+    describe EventSet do
       let(:a) { Definition.new(:signup, :board, :is_first_time, ->{}, a: 'a') }
       let(:b) { Definition.new(:signup, :board, :app_version, ->{}, a: '1') }
       let(:c) { Definition.new(:signup, :board, :app_build, ->{}, a: '-') }

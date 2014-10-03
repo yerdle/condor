@@ -2,16 +2,16 @@ require 'spec_helper'
 
 module Condor
   describe Dispatcher do
-    let(:event_list) { Registry::EventList.new }
+    let(:events) { Registry::EventSet.new }
 
     let(:relays) do
       [double('relay').as_null_object, double('relay').as_null_object]
     end
 
-    subject { Dispatcher.new(event_list, relays) }
+    subject { Dispatcher.new(events, relays) }
 
     before do
-      closure = DSL::Closure.new(nil, event_list: event_list)
+      closure = DSL::Closure.new(nil, events: events)
 
       DSL::Runner.new(closure, DSL::Syntax::Top).eval do
         on(:signup) {
@@ -64,7 +64,7 @@ module Condor
       let(:req) { double('request', headers: headers) }
 
       it 'calls each relevant definition code block with context' do
-        definitions = event_list[:signup][:board].definitions
+        definitions = events[:signup][:board].definitions
         definitions.each do |definition|
           expect(definition.block).to receive(:call)
         end
@@ -72,7 +72,7 @@ module Condor
       end
 
       it "does not call irrelevant definitions' code blocks" do
-        definition = event_list[:post][:board][:auction_id]
+        definition = events[:post][:board][:auction_id]
         expect(definition.block).not_to receive(:call)
         subject.dispatch(:signup, req: req, user: user)
       end

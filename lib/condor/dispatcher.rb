@@ -1,15 +1,15 @@
 module Condor
   class Dispatcher
-    attr_reader :event_list
+    attr_reader :events
     attr_reader :relays
 
-    def initialize(event_list, relays)
-      @event_list = event_list
-      @relays     = relays
+    def initialize(events, relays)
+      @events = events
+      @relays = relays
     end
 
     def dispatch(event, **context)
-      event = event_list[event]
+      event = events[event]
 
       # This could probably be easily moved into the registry classes for less
       # nested complexity.
