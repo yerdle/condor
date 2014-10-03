@@ -13,7 +13,7 @@ module Condor
           end
 
           def log(loggable, **options, &block)
-            event_list << ::Condor::Registry::Definition.new(
+            events << ::Condor::Registry::Definition.new(
               event, domain, loggable, block, **scope.merge(options))
           end
         end

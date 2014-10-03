@@ -3,7 +3,7 @@ module Condor
     class Runner < Object
       attr_reader :closure, :dsl
 
-      delegate :scope, :event_list, :event, :domain, to: :closure
+      delegate :scope, :events, :event, :domain, to: :closure
 
       def initialize(closure, dsl)
         @closure = closure

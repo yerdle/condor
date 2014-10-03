@@ -11,7 +11,7 @@ module Condor
 
         let(:closure) do
           double('closure',
-            event_list: double('event_list'),
+            events: double('event set'),
             event: event, domain: domain,
             scope: { some_option: 'value' })
         end
@@ -31,8 +31,8 @@ module Condor
             { fallback: 'unknown' }
           end
 
-          it 'adds a definition to the event list' do
-            expect(closure.event_list).to receive(:<<).once
+          it 'adds an event definition' do
+            expect(closure.events).to receive(:<<).once
             runner.log(:user_id, **options) { nil }
           end
         end
