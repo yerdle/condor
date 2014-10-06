@@ -79,7 +79,7 @@ module Condor
 
       it 'calls publish on each relay' do
         relays.each do |relay|
-          expect(relay).to receive(:publish).once
+          expect(relay).to receive(:publish).once.with(:signup, anything)
         end
         subject.dispatch(:signup, req: req, user: user)
       end
