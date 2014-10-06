@@ -9,11 +9,11 @@ module Condor
     end
 
     def dispatch(event, **context)
-      event = events[event]
+      _event = events[event]
 
       # This could probably be easily moved into the registry classes for less
       # nested complexity.
-      event_data = event.inject({}) do |event_data, (domain, loggables)|
+      event_data = _event.inject({}) do |event_data, (domain, loggables)|
         loggables_data = loggables.inject({}) do |loggables_data, (loggable, d)|
           args = d.block.parameters.inject([]) do |args, (t, n)|
             args << n.to_sym if t === :keyreq
@@ -26,7 +26,7 @@ module Condor
         event_data
       end
 
-      relays.each { |relay| relay.publish(event_data) }
+      relays.each { |relay| relay.publish(event, event_data) }
     end
   end
 end
