@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    condor (0.8.0)
+    condor (0.9.0)
       activesupport (>= 4.0.0)
 
 GEM
@@ -17,7 +17,7 @@ GEM
     docile (1.1.5)
     i18n (0.6.11)
     json (1.8.1)
-    minitest (5.4.1)
+    minitest (5.4.2)
     multi_json (1.10.1)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)

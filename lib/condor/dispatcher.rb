@@ -8,7 +8,7 @@ module Condor
       @relays = relays
     end
 
-    def dispatch(event, **context)
+    def dispatch(event, timestamp, **context)
       _event = events[event]
 
       # This could probably be easily moved into the registry classes for less
@@ -26,7 +26,7 @@ module Condor
         event_data
       end
 
-      relays.each { |relay| relay.publish(event, event_data) }
+      relays.each { |relay| relay.publish(event, timestamp, event_data) }
     end
   end
 end

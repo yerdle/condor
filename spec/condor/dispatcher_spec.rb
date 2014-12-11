@@ -68,20 +68,21 @@ module Condor
         definitions.each do |definition|
           expect(definition.block).to receive(:call)
         end
-        subject.dispatch(:signup, req: req, user: user)
+        subject.dispatch(:signup, Time.now, req: req, user: user)
       end
 
       it "does not call irrelevant definitions' code blocks" do
         definition = events[:post][:board][:auction_id]
         expect(definition.block).not_to receive(:call)
-        subject.dispatch(:signup, req: req, user: user)
+        subject.dispatch(:signup, Time.now, req: req, user: user)
       end
 
       it 'calls publish on each relay' do
+        time = Time.now
         relays.each do |relay|
-          expect(relay).to receive(:publish).once.with(:signup, anything)
+          expect(relay).to receive(:publish).once.with(:signup, time, anything)
         end
-        subject.dispatch(:signup, req: req, user: user)
+        subject.dispatch(:signup, time, req: req, user: user)
       end
     end
   end
