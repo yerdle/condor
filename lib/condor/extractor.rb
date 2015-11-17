@@ -19,7 +19,7 @@ module Condor
           begin
             loggables_data[loggable] = d.block.call(context.slice(*args))
           rescue StandardError => e
-            raise InvalidInput, "bad '#{loggable}'. see #cause of this error."
+            raise InvalidInput, "bad '#{loggable}': #{e.message}"
           end
           loggables_data
         end
